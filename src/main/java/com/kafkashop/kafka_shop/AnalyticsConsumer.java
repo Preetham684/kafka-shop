@@ -1,21 +1,25 @@
 package com.kafkashop.kafka_shop;
 
-import java.util.Properties;
-import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import java.util.List;
 import java.time.Duration;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
+import java.util.List;
+import java.util.Properties;
+
+import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
 
-public class OrderConsumer {
 
-	public static void main(String[] args) {
-		System.out.println("1. Starting OrderConsumer...");
+public class AnalyticsConsumer 
+{
+    public static void main( String[] args )
+    {
+
+		System.out.println("1. Starting AnalyticsConsumer...");
 		
-		String consumerName = args.length > 0 ? args[0] : "Unknown Consumer";
+		//String consumerName = args.length > 0 ? args[0] : "Unknown Consumer";
 
-		System.out.println("Starting " + consumerName);
+		//System.out.println("Starting " + consumerName);
 		
 		Properties properties = new Properties();
 
@@ -36,7 +40,7 @@ public class OrderConsumer {
 
 		properties.put(
 		    "group.id",
-		    "order-service"
+		    "analytics-service"
 		);
 		
 
@@ -55,7 +59,7 @@ public class OrderConsumer {
 
 		    for (ConsumerRecord<String, String> record : records) {
 
-		    	System.out.println("Consumer: " + consumerName);
+		    	//System.out.println("Consumer: " + consumerName);
 		        System.out.println("Order received!");
 		        System.out.println("Key: " + record.key());
 		        System.out.println("Value: " + record.value());
@@ -64,6 +68,6 @@ public class OrderConsumer {
 		        System.out.println("------------------------");
 		    }
 		}
-	}
-
+	
+    }
 }

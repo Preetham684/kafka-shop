@@ -27,24 +27,36 @@ public class OrderProducer {
 			
 		Producer<String, String> producer = new KafkaProducer<>(properties);
 		
-		String order = "103,Roses,6,20";
-		
-		ProducerRecord<String, String> record =
-		        new ProducerRecord<>(
-		            "orders",
-		            "103",
-		            order
-		        );
-		
-		var metadata = producer.send(record).get();
+		for (int orderId = 101; orderId <= 110; orderId++) {
 
-		System.out.println("Order successfully stored in Kafka!");
+		    String key = String.valueOf(orderId);
+
+		    String order =
+		            orderId + ",Mechanical Keyboard,2,79.99";
+
+		    ProducerRecord<String, String> record =
+		            new ProducerRecord<>(
+		                    "orders",
+		                    key,
+		                    order
+		            );
+
+		    var metadata = producer.send(record).get();
+
+		    System.out.println(
+		            "Order " + orderId +
+		            " → Partition " + metadata.partition() +
+		            ", Offset " + metadata.offset()
+		    );
+		}
+
+		//System.out.println("Order successfully stored in Kafka!");
 		//Subsection inside a kafka that allows connections to be established by the producer and consumers
-		System.out.println("Topic: " + metadata.topic());
+		//System.out.println("Topic: " + metadata.topic());
 		//A partition is one ordered log of records inside a Kafka topic
-		System.out.println("Partition: " + metadata.partition());
+		//System.out.println("Partition: " + metadata.partition());
 		//The position of a record within a particular partition.
-		System.out.println("Offset: " + metadata.offset());
+		//System.out.println("Offset: " + metadata.offset());
 
 		producer.close();
 
