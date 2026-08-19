@@ -1,6 +1,7 @@
 package com.kafkashop.kafka_shop;
 
 import java.time.Duration;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import java.util.Properties;
 
@@ -17,9 +18,9 @@ public class AnalyticsConsumer
 
 		System.out.println("1. Starting AnalyticsConsumer...");
 		
-		//String consumerName = args.length > 0 ? args[0] : "Unknown Consumer";
+		String consumerName = args.length > 0 ? args[0] : "Unknown Consumer";
 
-		//System.out.println("Starting " + consumerName);
+		System.out.println("Starting " + consumerName);
 		
 		Properties properties = new Properties();
 
@@ -35,7 +36,7 @@ public class AnalyticsConsumer
 
 		properties.put(
 		    "value.deserializer",
-		    "org.apache.kafka.common.serialization.StringDeserializer"
+		    OrderDeserializer.class.getName()
 		);
 
 		properties.put(
@@ -44,7 +45,7 @@ public class AnalyticsConsumer
 		);
 		
 
-		Consumer<String, String> consumer = new KafkaConsumer<>(properties);
+		Consumer<String, Order> consumer = new KafkaConsumer<>(properties);
 
 		System.out.println("2. KafkaConsumer created...");
 
@@ -54,15 +55,22 @@ public class AnalyticsConsumer
 		
 		while (true) {
 
-		    ConsumerRecords<String, String> records =
+		    ConsumerRecords<String, Order> records =
 		            consumer.poll(Duration.ofMillis(100));
 
-		    for (ConsumerRecord<String, String> record : records) {
-
-		    	//System.out.println("Consumer: " + consumerName);
+		    for (ConsumerRecord<String, Order> record : records) {
+		    	
+		    	Order order = record.value();
+		    	
+		    	System.out.println("Consumer: " + consumerName);
 		        System.out.println("Order received!");
-		        System.out.println("Key: " + record.key());
-		        System.out.println("Value: " + record.value());
+		        
+		        System.out.println("Order ID: " + order.getOrderId());
+		        System.out.println("Product: " + order.getProduct());
+		        System.out.println("Quantity: " + order.getQuantity());
+		        System.out.println("Price: $" + order.getPrice());
+		        System.out.println("Customer: " + order.getCustomerEmail());
+
 		        System.out.println("Partition: " + record.partition());
 		        System.out.println("Offset: " + record.offset());
 		        System.out.println("------------------------");

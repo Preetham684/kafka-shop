@@ -1,6 +1,9 @@
 package com.kafkashop.kafka_shop;
 
 import java.util.Properties;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -9,7 +12,7 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 
 public class OrderProducer {
 
-	public static void main(String[] args) throws InterruptedException, ExecutionException {
+	public static void main(String[] args) throws InterruptedException, ExecutionException, JsonProcessingException {
 		//Properties is a normal Java class for storing configuration as key/value pairs.
 		Properties properties = new Properties();
 
@@ -22,19 +25,28 @@ public class OrderProducer {
 
 			properties.put(
 			    "value.serializer",
-			    "org.apache.kafka.common.serialization.StringSerializer"
+			    OrderSerializer.class.getName()
 			);
 			
-		Producer<String, String> producer = new KafkaProducer<>(properties);
+		Producer<String, Order> producer = new KafkaProducer<>(properties);
+		//ObjectMapper objectMapper = new ObjectMapper(); //Used for Jackson
+		//We don't need ObjectMapper anymore since we're passing in the order object directly into the producer object above
 		
 		for (int orderId = 101; orderId <= 110; orderId++) {
 
 		    String key = String.valueOf(orderId);
 
-		    String order =
-		            orderId + ",Mechanical Keyboard,2,79.99";
+		    Order order = new Order(
+		            orderId,
+		            "Mechanical Keyboard",
+		            2,
+		            79.99,
+		            "customer@example.com"
+		    );
+		    
+		    //String orderJson = objectMapper.writeValueAsString(order); //Converting the java object into a JSON formatted string
 
-		    ProducerRecord<String, String> record =
+		    ProducerRecord<String, Order> record =
 		            new ProducerRecord<>(
 		                    "orders",
 		                    key,
